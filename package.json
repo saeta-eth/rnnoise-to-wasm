@@ -1,0 +1,13 @@
+{
+	"name": "rnnoise",
+	"version": "1.0.0",
+	"scripts": {
+		"docker:build": "docker build -t rnnoise .",
+		"docker:create": "docker create --name rnnoise rnnoise",
+		"docker:copy": "docker cp rnnoise:/rnnoise/dist/. ./dist",
+		"docker:remove": "docker rm -f rnnoise",
+		"emscripten": "emcc src/denoise.c src/rnn.c src/rnn_data.c src/pitch.c src/kiss_fft.c src/celt_lpc.c -Isrc -Iinclude -O3 -o ./dist/rnnoise.js  -s EXPORTED_FUNCTIONS=\"['_rnnoise_process_frame', '_rnnoise_init', '_rnnoise_destroy', '_rnnoise_create', '_malloc', '_free']\" -s STRICT=1 -s ALLOW_MEMORY_GROWTH=1 -s MALLOC=emmalloc -s MODULARIZE=1 -s EXPORT_NAME=\"'RNNoiseModule'\"",
+		"build": "yarn docker:build && yarn docker:create && yarn docker:copy && yarn docker:remove",
+		"prebuild": "mkdir -p dist && rm dist/* || true"
+	}
+}
